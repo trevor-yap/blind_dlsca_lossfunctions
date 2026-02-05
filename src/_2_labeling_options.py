@@ -60,15 +60,15 @@ def MultiPointSlicing(traces, pois, num_bits):
 
 
 
-def labeling_traces(X_train,poi_xors, num_bits,  save_root, labeling_type, poi_selection_mode, nb_poi, save_labels = False):
+def labeling_traces(X_train,poi_xors, num_bits,  save_root, labeling_type, poi_selection_mode, save_labels = False):
     if save_labels == True:
         if labeling_type == 'MultiPointSlicing':
             Y_train_solo_all_hw = MultiPointSlicing(X_train, poi_xors, num_bits)
         # elif labeling_type == 'MultiPointClustering':
         #     Y_train_solo_all_hw = Multi_Point_Cluster_Labeling(X_train, poi_xors)
-        np.save(save_root + f"{labeling_type}_empirical_hw_{poi_selection_mode}_{nb_poi}_solo.npy", Y_train_solo_all_hw)
+        np.save(save_root + f"{labeling_type}_empirical_hw_{poi_selection_mode}_solo.npy", Y_train_solo_all_hw)
     else:
         print("Loading labeling options:", labeling_type)
         Y_train_solo_all_hw = np.load(
-            save_root + f"{labeling_type}_empirical_hw_{poi_selection_mode}_{nb_poi}_solo.npy")
+            save_root + f"{labeling_type}_empirical_hw_{poi_selection_mode}_solo.npy")
     return Y_train_solo_all_hw
