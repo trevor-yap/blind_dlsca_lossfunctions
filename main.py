@@ -49,5 +49,5 @@ if __name__ == '__main__':
 
     Y_noisy =labeling_traces(X_profiling, poi_xors, num_bits, save_root, labeling_type, poi_selection_mode,save_labels=True)
 
-    print("Y_noisy:", Y_noisy)
+    print("Y_noisy:", Y_noisy, Y_noisy.shape)
 
