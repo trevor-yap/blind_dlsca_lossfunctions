@@ -27,18 +27,18 @@ def MultiPointSlicing(traces, pois, num_bits):
     print("pois:",pois, pois.shape)
     new_labels = np.zeros(traces.shape[0])
     HW_all_m = [] #(nb_traces, samplepoints)
-    num_per_class = np.zeros(num_bits + 1)
+    class_combi = np.zeros(num_bits + 1)
     # build how many per class
     for j in range(num_bits + 1):
-        num_per_class[j] = math.ceil(traces.shape[0] / (2 ** num_bits) * math.comb(num_bits, j))
-    print("num_per_class", num_per_class)
-    print("sum num_per_class:", np.sum(num_per_class))
+        class_combi[j] = math.ceil(traces.shape[0] / (2 ** num_bits) * math.comb(num_bits, j))
+    print("class_combi", class_combi)
+    print("sum class_combi:", np.sum(class_combi))
     print("nb_traces:", traces.shape[0])
     for samplept in range(pois.shape[0]): #sample point
         sorted_index = np.argsort(traces[:, pois[samplept]], axis=0)  # sort in ascending order
         sorted_index = sorted_index[::-1]
-        class_combi = deepcopy(num_per_class)
-        print("class_combi", class_combi)
+        num_per_class = deepcopy(class_combi)
+        print("num_per_class", num_per_class)
         HW_4_1m = np.zeros(traces.shape[0])
 
         class_considering = 0
