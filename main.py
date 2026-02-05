@@ -24,7 +24,7 @@ if __name__ == '__main__':
     if dataset == 'Chipwhisperer':
         root = "./"
         data_root = 'Dataset/Chipwhisperer/'
-        (X_profiling, X_attack), (Y_profiling, Y_attack), (plt_profiling,plt_attack), correct_key = load_chipwhisperer(root + data_root + '/', leakage_model=leakage)
+        (X_profiling, X_attack), (Y_profiling, Y_attack), (plt_profiling,plt_attack), correct_key = load_chipwhisperer(root + data_root, leakage_model=leakage)
 
 
     #PoI Selection
