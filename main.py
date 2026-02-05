@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from src._2_labeling_options import labeling_traces
 from src._3_DL_training import train_pipeline_singletask_dl
 from src.net import create_hyperparameter_space, MLP, CNN
-from src.utils import load_chipwhisperer, check_accuracy, predict_attack_traces, perform_attacks
+from src.utils import load_chipwhisperer, check_accuracy, predict_attack_traces, perform_attacks, NTGE_fn
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -60,7 +60,7 @@ if __name__ == '__main__':
         poi_highest_variance = np.argmax(variance_trace)
         # print(poi_highest_variance)
         poi_xors = np.array([i for i in range(poi_highest_variance, X_profiling.shape[1],1)])
-    elif poi_selection_mode == "Variance_Threshold": #acc: 0.069875
+    elif poi_selection_mode == "Variance_Threshold": #0.112375
         variance_trace = np.var(X_profiling, axis=0)
         mean_trace = np.mean(X_profiling, axis=0)
         poi_xors = np.array(np.where(variance_trace>=0.0006))[0]
@@ -82,9 +82,9 @@ if __name__ == '__main__':
                         config)
             print("Done saving")
     trainning_model = True
-    for model_idx in range(total_num_model):
-        for loss_type in ["CCE", "PEER_LOSS_CCE"]:  # , "PEER_LOSS_CCE"
-            for model_type in ["mlp", "cnn"]:
+    for model_type in ["mlp", "cnn"]:
+        for model_idx in range(total_num_model):
+            for loss_type in ["CCE", "PEER_LOSS_CCE"]:  # , "PEER_LOSS_CCE"
                 print("model_idx: ", model_idx)
                 config = np.load(model_config_root + "configuration" + str(model_idx) + "_" + model_type + ".npy",
                                  allow_pickle=True).item()
@@ -123,3 +123,9 @@ if __name__ == '__main__':
                 GE, key_prob = perform_attacks(nb_traces_attacks, predictions, plt_attack, correct_key,
                                                dataset=dataset,
                                                nb_attacks=nb_attacks, shuffle=True, leakage=leakage)
+
+                print("GE", GE)
+                NTGE = NTGE_fn(GE)
+                print("NTGE", NTGE)
+                np.save(trained_model_root + f"GE_{model_type}_{labeling_type}_{model_idx}.npy",
+                        {"GE": GE, "NTGE": NTGE})

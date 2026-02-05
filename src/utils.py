@@ -171,3 +171,13 @@ def perform_attacks( nb_traces, predictions, plt_attack,correct_key,leakage,data
         all_key_log_prob += key_log_prob
 
     return np.mean(all_rk_evol, axis=0), key_log_prob, #this will be the last one key_log_prob
+
+
+def NTGE_fn(GE):
+    NTGE = float('inf')
+    for i in range(GE.shape[0] - 1, -1, -1):
+        if GE[i] > 0:
+            break
+        elif GE[i] == 0:
+            NTGE = i
+    return NTGE
