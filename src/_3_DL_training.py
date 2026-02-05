@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 from torchvision.transforms import transforms
 import torch
 
-from src.dataloader_blind import Blind_Single_Dataset, ToTensor_trace_blind
+from src.dataloader import Blind_Single_Dataset, ToTensor_trace_blind
 from src.trainer import trainer_singletask_blind
 
 
