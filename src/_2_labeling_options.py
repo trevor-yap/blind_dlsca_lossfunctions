@@ -53,7 +53,7 @@ def MultiPointSlicing(traces, pois, num_bits):
                 HW_4_1m[sorted_index[idx]] = num_bits
 
         HW_all_m.append(HW_4_1m)
-    HW_all_m = np.array(HW_all_m)
+    HW_all_m = np.array(HW_all_m).T
     print("HW_all_m", HW_all_m, HW_all_m.shape)
     new_labels = np.apply_along_axis(weighted_majority_vote, axis=1, arr=HW_all_m, weights=class_combi)
     print("new_labels", new_labels, new_labels.shape)
