@@ -85,7 +85,7 @@ if __name__ == '__main__':
     for model_type in ["mlp", "cnn"]:
         for model_idx in range(total_num_model):
             for loss_type in ["CCE", "PEER_LOSS_CCE"]:  # , "PEER_LOSS_CCE"
-                print("model_idx: ", model_idx)
+
                 config = np.load(model_config_root + "configuration" + str(model_idx) + "_" + model_type + ".npy",
                                  allow_pickle=True).item()
 
@@ -117,6 +117,7 @@ if __name__ == '__main__':
                 # 4. Apply the Disinguisher
 
                 predictions_wo_softmax = predict_attack_traces(model, X_attack, device, interval_nb_trace=100)
+                print(model_type, " model_idx: ", model_idx, " loss_type:", loss_type)
                 predictions = F.softmax(predictions_wo_softmax, dim=1)
                 predictions = predictions.cpu().detach().numpy()
 
