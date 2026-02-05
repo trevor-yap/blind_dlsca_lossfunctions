@@ -49,7 +49,7 @@ if __name__ == '__main__':
     elif poi_selection_mode == "Variance_Threshold":
         variance_trace = np.var(X_profiling, axis=0)
         mean_trace = np.mean(X_profiling, axis=0)
-        poi_xors = np.array(np.where(variance_trace>=0.0006))
+        poi_xors = np.where(variance_trace>=0.0006)
     print("poi_xors:", poi_xors, poi_xors.shape)
     Y_noisy =labeling_traces(X_profiling, poi_xors, num_bits, save_root, labeling_type, poi_selection_mode,save_labels=True)
 
