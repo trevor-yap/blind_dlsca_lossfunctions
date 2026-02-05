@@ -1,7 +1,6 @@
 import os
 import numpy as np
 from matplotlib import pyplot as plt
-from src._1_poi_selections import SOSD_SOST
 from src.utils import load_chipwhisperer
 
 # Press the green button in the gutter to run the script.
