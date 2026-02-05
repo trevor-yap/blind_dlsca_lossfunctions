@@ -45,7 +45,7 @@ if __name__ == '__main__':
             plt.close(fig)
         poi_highest_variance = np.argmax(variance_trace)
         print(poi_highest_variance)
-        poi_xors = [i for i in range(poi_highest_variance, X_profiling.shape[1],1)]
+        poi_xors = np.array([i for i in range(poi_highest_variance, X_profiling.shape[1],1)])
 
     Y_noisy =labeling_traces(X_profiling, poi_xors, num_bits, save_root, labeling_type, poi_selection_mode,save_labels=True)
 
