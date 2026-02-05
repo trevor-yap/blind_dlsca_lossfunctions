@@ -72,7 +72,7 @@ if __name__ == '__main__':
 
     ######################################################################Training DNN #############################################################################################3
     total_num_model = 100
-    save_config = True
+    save_config = False
     for model_type in ["mlp", "cnn"]:
         if save_config == True:
             print("SAVING NEW CONFIGURATION")
@@ -81,7 +81,6 @@ if __name__ == '__main__':
                 np.save(model_config_root + "configuration" + str(model_idx) + "_" + model_type + ".npy",
                         config)
             print("Done saving")
-    print(ok)
     trainning_model = True
     for model_idx in range(total_num_model):
         for loss_type in ["CCE", "PEER_LOSS_CCE"]:  # , "PEER_LOSS_CCE"
