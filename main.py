@@ -33,5 +33,9 @@ if __name__ == '__main__':
     fig, ax = plt.subplots(figsize=(12, 9))
     x_axis = [i for i in range(variance_trace.shape[0])]
     ax.plot(x_axis, variance_trace, c="red", label="Variance")
+    plt.savefig(image_root + 'Variance.png')
+    plt.close(fig)
+    fig, ax = plt.subplots(figsize=(12, 9))
+    x_axis = [i for i in range(mean_trace.shape[0])]
     ax.plot(x_axis, mean_trace, c="blue", label="Mean")
-    plt.savefig(image_root + 'Mean_Variance.png')
+    plt.savefig(image_root + 'Mean.png')
