@@ -38,6 +38,7 @@ def MultiPointSlicing(traces, pois, num_bits):
         sorted_index = np.argsort(traces[:, pois[samplept]], axis=0)  # sort in ascending order
         sorted_index = sorted_index[::-1]
         class_combi = deepcopy(num_per_class)
+        print("class_combi", class_combi)
         HW_4_1m = np.zeros(traces.shape[0])
 
         class_considering = 0
