@@ -30,12 +30,18 @@ if __name__ == '__main__':
     #PoI Selection
     variance_trace = np.var(X_profiling, axis = 0)
     mean_trace = np.mean(X_profiling, axis = 0)
-    fig, ax = plt.subplots(figsize=(12, 9))
-    x_axis = [i for i in range(variance_trace.shape[0])]
-    ax.plot(x_axis, variance_trace, c="red", label="Variance")
-    plt.savefig(image_root + 'Variance.png')
-    plt.close(fig)
-    fig, ax = plt.subplots(figsize=(12, 9))
-    x_axis = [i for i in range(mean_trace.shape[0])]
-    ax.plot(x_axis, mean_trace, c="blue", label="Mean")
-    plt.savefig(image_root + 'Mean.png')
+
+    save_fig_poi_var = False
+    if save_fig_poi_var == True:
+        fig, ax = plt.subplots(figsize=(12, 9))
+        x_axis = [i for i in range(variance_trace.shape[0])]
+        ax.plot(x_axis, variance_trace, c="red", label="Variance")
+        plt.savefig(image_root + 'Variance.png')
+        plt.close(fig)
+    poi_highest_variance = np.argmax(variance_trace)
+    print(poi_highest_variance)
+    X_label = X_profiling[:, poi_highest_variance:]
+
+
+
+
