@@ -56,4 +56,4 @@ if __name__ == '__main__':
     for i in range(Y_profiling.shape[0]):
         if Y_profiling[i] == Y_noisy[i]:
             acc+=1
-    print("acc", acc/100)
+    print("acc", acc/Y_profiling.shape[0])
