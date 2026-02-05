@@ -22,7 +22,7 @@ if __name__ == '__main__':
         os.mkdir(image_root)
 
     if dataset == 'Chipwhisperer':
-        root = "./"
+        root = "./../"
         data_root = 'Dataset/Chipwhisperer/'
         (X_profiling, X_attack), (Y_profiling, Y_attack), (plt_profiling,plt_attack), correct_key = load_chipwhisperer(root + data_root, leakage_model=leakage)
 
