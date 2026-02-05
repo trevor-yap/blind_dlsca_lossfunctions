@@ -1,6 +1,8 @@
-
+import random
+from tqdm import tqdm
 import numpy as np
-
+import torch
+import math
 
 AES_Sbox = np.array([
     0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
@@ -58,3 +60,114 @@ def load_chipwhisperer(chipwhisper_folder, leakage_model='HW',train_begin = 0,tr
     keys = np.load(chipwhisper_folder + 'key.npy')[:10000, 0]
     return (X_profiling[train_begin:train_end], X_profiling[test_begin:test_end]), (Y_profiling[train_begin:train_end],  Y_profiling[test_begin:test_end]), \
            (P_profiling[train_begin:train_end],  P_profiling[test_begin:test_end]), keys[0]
+
+
+def check_accuracy(Y_profiling, Y_noisy):
+    acc = 0
+    for i in range(Y_profiling.shape[0]):
+        if Y_profiling[i] == Y_noisy[i]:
+            acc+=1
+    print("acc", acc/Y_profiling.shape[0])
+    return acc
+
+
+def predict_attack_traces(model, X_attack, device, interval_nb_trace=100):
+    attack_traces = torch.from_numpy(np.expand_dims(X_attack, 1)).to(device).float()
+    if attack_traces.shape[0] < interval_nb_trace:
+        predictions_wo_softmax = model(attack_traces)
+        predictions_wo_softmax = predictions_wo_softmax.cpu().detach()
+    else:
+        predictions_wo_softmax = model(attack_traces[0:interval_nb_trace, :])
+        predictions_wo_softmax = predictions_wo_softmax.cpu().detach()
+        length_prediction = interval_nb_trace
+        while (length_prediction < attack_traces.shape[0]):
+            start = length_prediction
+            end = length_prediction + interval_nb_trace
+            print(f"predictions: {end}/{attack_traces.shape[0]}")
+            if end <= attack_traces.shape[0]:
+                predict = model(attack_traces[start:end, :])
+            else:
+                predict = model(attack_traces[start: attack_traces.shape[0], :])
+            predict = predict.cpu().detach()
+            predictions_wo_softmax = torch.cat((predictions_wo_softmax, predict), dim=0)
+            length_prediction += interval_nb_trace
+    return predictions_wo_softmax
+
+
+
+# Objective: GE
+def rk_key(rank_array, key):
+    key_val = rank_array[key]
+    final_rank = np.float32(np.where(np.sort(rank_array)[::-1] == key_val)[0][0])
+    if math.isnan(float(final_rank)) or math.isinf(float(final_rank)):
+        return np.float32(256)
+    else:
+        return np.float32(final_rank)
+
+# Compute the evolution of rank
+def rank_compute(prediction, att_plt, correct_key,leakage, dataset):
+    '''
+    :param prediction: prediction by the neural network
+    :param att_plt: attack plaintext
+    :return: key_log_prob which is the log probability
+    '''
+    hw = [bin(x).count("1") for x in range(256)]
+    (nb_traces, nb_hyp) = prediction.shape
+
+    key_log_prob = np.zeros(256)
+    prediction = np.log(prediction + 1e-40)
+    rank_evol = np.full(nb_traces, 255)
+    for i in range(nb_traces):
+        for k in range(256):
+            if dataset == "AES_HD_ext":
+                if leakage == 'ID':
+                    key_log_prob[k] += prediction[i, AES_Sbox_inv[k ^ int(att_plt[i, 15])] ^ att_plt[i, 11] ]
+                else:
+
+                    key_log_prob[k] += prediction[i, hw[AES_Sbox_inv[k ^ int(att_plt[i, 15])] ^ att_plt[i, 11]] ]
+            elif dataset == "AES_HD_ext_ID":
+                if leakage == 'ID':
+                    key_log_prob[k] += prediction[i, AES_Sbox_inv[k ^ int(att_plt[i, 15])]]
+                else:
+                    key_log_prob[k] += prediction[i, hw[AES_Sbox_inv[k ^ int(att_plt[i, 15])]]]
+            else:
+                if leakage == 'ID':
+                    key_log_prob[k] += prediction[i,  AES_Sbox[k ^ int(att_plt[i])]]
+                else:
+                    key_log_prob[k] += prediction[i,  hw[ AES_Sbox[k ^ int(att_plt[i])]]]
+
+        rank_evol[i] =  rk_key(key_log_prob, correct_key) #this will sort it.
+
+    return rank_evol, key_log_prob
+
+
+def perform_attacks( nb_traces, predictions, plt_attack,correct_key,leakage,dataset,nb_attacks=1, shuffle=True):
+    '''
+    :param nb_traces: number_traces used to attack
+    :param predictions: output of the neural network i.e. prob of each class
+    :param plt_attack: plaintext from attack traces
+    :param nb_attacks: number of attack experiments
+    :param byte: byte in questions
+    :param shuffle: true then it shuffle
+    :return: mean of the rank for each experiments, log_probability of the output for all key
+    '''
+    all_rk_evol = np.zeros((nb_attacks, nb_traces)) #(num_attack, num_traces used)
+    all_key_log_prob = np.zeros(256)
+    for i in tqdm(range(nb_attacks)): #tqdm()
+        if shuffle:
+            l = list(zip(predictions, plt_attack)) #list of [prediction, plaintext_attack]
+            random.shuffle(l) #shuffle the each other prediction
+            sp, splt = list(zip(*l)) #*l = unpacking, output: shuffled predictions and shuffled plaintext.
+            sp = np.array(sp)
+            splt = np.array(splt)
+            att_pred = sp[:nb_traces] #just use the required number of traces
+            att_plt = splt[:nb_traces]
+
+        else:
+            att_pred = predictions[:nb_traces]
+            att_plt = plt_attack[:nb_traces]
+        rank_evol, key_log_prob = rank_compute(att_pred, att_plt,correct_key,leakage=leakage,dataset=dataset)
+        all_rk_evol[i] = rank_evol
+        all_key_log_prob += key_log_prob
+
+    return np.mean(all_rk_evol, axis=0), key_log_prob, #this will be the last one key_log_prob
