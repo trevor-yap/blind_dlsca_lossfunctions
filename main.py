@@ -32,7 +32,7 @@ if __name__ == '__main__':
     classes = num_bits+1
 
     #PoI Selection
-    if poi_selection_mode == "Variance_Threshold":
+    if poi_selection_mode == "Variance_Segment":
         variance_trace = np.var(X_profiling, axis = 0)
         mean_trace = np.mean(X_profiling, axis = 0)
 
@@ -46,14 +46,19 @@ if __name__ == '__main__':
         poi_highest_variance = np.argmax(variance_trace)
         print(poi_highest_variance)
         poi_xors = np.array([i for i in range(poi_highest_variance, X_profiling.shape[1],1)])
+    elif poi_selection_mode == "Variance_Threshold":
+        variance_trace = np.var(X_profiling, axis=0)
+        mean_trace = np.mean(X_profiling, axis=0)
+        poi_xors = np.where(variance_trace>=0.0006)
 
     Y_noisy =labeling_traces(X_profiling, poi_xors, num_bits, save_root, labeling_type, poi_selection_mode,save_labels=True)
 
-    print("Y_noisy:", Y_noisy, Y_noisy.shape)
-    for i in range(9):
-        print("i",i, np.where(Y_noisy == i))
+
     acc = 0
     for i in range(Y_profiling.shape[0]):
         if Y_profiling[i] == Y_noisy[i]:
             acc+=1
     print("acc", acc/Y_profiling.shape[0])
+
+
+
