@@ -10,7 +10,7 @@ if __name__ == '__main__':
     dataset = 'Chipwhisperer'
     leakage = "HW"
     labeling_type = "MultiPointSlicing"
-    poi_selection_mode = "Variance_Segment" #Variance_Segment, Variance_Threshold
+    poi_selection_mode = "Variance_Threshold" #Variance_Segment, Variance_Threshold
     result_root = "./Result/"
     save_root = result_root + "blind_" + dataset + "_"+ leakage + "_"+labeling_type+"/"
     model_config_root = result_root + "model_config/"
@@ -32,7 +32,7 @@ if __name__ == '__main__':
     classes = num_bits+1
 
     #PoI Selection
-    if poi_selection_mode == "Variance_Segment":
+    if poi_selection_mode == "Variance_Segment": #acc: 0.069875
         variance_trace = np.var(X_profiling, axis = 0)
         mean_trace = np.mean(X_profiling, axis = 0)
 
@@ -44,9 +44,9 @@ if __name__ == '__main__':
             plt.savefig(image_root + 'Variance.png')
             plt.close(fig)
         poi_highest_variance = np.argmax(variance_trace)
-        print(poi_highest_variance)
+        # print(poi_highest_variance)
         poi_xors = np.array([i for i in range(poi_highest_variance, X_profiling.shape[1],1)])
-    elif poi_selection_mode == "Variance_Threshold":
+    elif poi_selection_mode == "Variance_Threshold": #acc: 0.069875
         variance_trace = np.var(X_profiling, axis=0)
         mean_trace = np.mean(X_profiling, axis=0)
         poi_xors = np.array(np.where(variance_trace>=0.0006))[0]
