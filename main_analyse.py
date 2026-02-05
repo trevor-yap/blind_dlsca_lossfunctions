@@ -48,6 +48,5 @@ if __name__ == '__main__':
                 result = np.load(trained_model_root + f"GE_{model_type}_{labeling_type}_{model_idx}.npy",
                        allow_pickle=True).item()
                 GE = result["GE"]
-                print("GE", GE)
                 NTGE = result["NTGE"]
-                print("NTGE", NTGE)
+                print(model_type, model_idx, loss_type, "GE", GE, "NTGE", NTGE)
