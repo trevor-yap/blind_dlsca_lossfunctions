@@ -51,9 +51,9 @@ if __name__ == '__main__':
 
     print("Y_noisy:", Y_noisy, Y_noisy.shape)
     for i in range(9):
-        print("i", np.where(Y_noisy == i))
+        print("i",i, np.where(Y_noisy == i))
     acc = 0
     for i in range(Y_profiling.shape[0]):
         if Y_profiling[i] == Y_noisy[i]:
             acc+=1
-    print("acc", acc*100)
+    print("acc", acc/100)
