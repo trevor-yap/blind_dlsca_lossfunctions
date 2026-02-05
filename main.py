@@ -10,7 +10,7 @@ if __name__ == '__main__':
     dataset = 'Chipwhisperer'
     leakage = "HW"
     labeling_type = "MultiPointSlicing"
-    poi_selection_mode = "Variance_Threshold"
+    poi_selection_mode = "Variance_Segment" #Variance_Segment, Variance_Threshold
     result_root = "./Result/"
     save_root = result_root + "blind_" + dataset + "_"+ leakage + "_"+labeling_type+"/"
     model_config_root = result_root + "model_config/"
