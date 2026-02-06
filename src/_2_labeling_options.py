@@ -83,7 +83,7 @@ def Multi_Point_Cluster_Labeling(traces, poi_xors, dataset, num_bits = 8, num_br
     #Fit the Gaussian Mixture for one branch
     n_clusters = (num_bits+1)**num_branch
     model_joint = GaussianMixture(n_components=n_clusters, random_state=0)
-    model_joint.fit(X_train_joint[:1000])
+    model_joint.fit(X_train_joint)
     clusters_joint = model_joint.predict(X_train_joint)
     print("clusters_joint", clusters_joint, clusters_joint.shape)
     center_traces = np.zeros((n_clusters, num_branch*num_poi))
