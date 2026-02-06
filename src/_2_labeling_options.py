@@ -31,6 +31,9 @@ def Slice_Clustering(center_traces_full, dataset, num_branch):
     elif dataset == "Chipwhisperer" or dataset == "Chipwhisperer_desync":
         class_combi = [1, 2, 8, 18, 23, 18, 8, 2, 1]
         assert num_branch == 2
+    elif dataset == "Ascon":
+        class_combi = [3, 23, 80, 159, 199, 159, 80, 23, 3]
+        assert num_branch == 3
     num_poi = center_traces_full.shape[1]//num_branch
     max_nb_class = len(class_combi)
     print("class_combi:", class_combi)
@@ -78,14 +81,14 @@ def Multi_Point_Cluster_Labeling(traces, poi_xors, dataset, num_bits = 9, num_br
     #Fit the Gaussian Mixture for one branch
     n_clusters = num_bits**num_branch
     model_joint = GaussianMixture(n_components=n_clusters, random_state=0)
-    model_joint.fit(X_train_joint)
+    model_joint.fit(X_train_joint[:1000])
     clusters_joint = model_joint.predict(X_train_joint)
     center_traces = np.zeros((n_clusters, num_poi))
     for cluster in range(n_clusters):
         cluster_members = X_train_joint[clusters_joint == cluster, :]
         center_traces[cluster] = np.mean(cluster_members, axis=0)
-    empirical_hws = Slice_Clustering(center_traces , dataset, num_branch)
-
+    empirical_hws = Slice_Clustering(center_traces, dataset, num_branch)
+    print("empirical_hws", empirical_hws.shape)
 
     #label all the traces in the same cluster.
     for cluster in range(n_clusters):
