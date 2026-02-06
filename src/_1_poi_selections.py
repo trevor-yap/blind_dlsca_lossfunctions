@@ -24,8 +24,9 @@ def PoI_Selection_AES(nb_poi, total_samplept, number_of_traces, traces, labels, 
         fig, ax = plt.subplots(figsize=(12, 9))
         x_axis = [i for i in range(total_samplept)]
         color = ["blue", "orange"]
+        variable = ["m", "y"]
         for j in range(2):
-            ax.plot(x_axis, cpa_xors[j], c=color[j], label="$HW(m_" + str(j) + ")$")
+            ax.plot(x_axis, cpa_xors[j], c=color[j], label="$HW(" + variable[j] + ")$")
 
         ax.set_xlabel('Sample points', fontsize=20)
         ax.set_ylabel('(Absolute) Correlation', fontsize=20)
