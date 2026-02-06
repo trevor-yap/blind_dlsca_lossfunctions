@@ -4,11 +4,14 @@ from matplotlib import pyplot as plt
 import torch
 import torch.nn.functional as F
 
-from src._1_poi_selections import PoI_Selection_AES
+from src._0_theorectical_histogram import obtain_theoretical_histogram
+from src._1_poi_selections import PoI_Selection_AES, poi_selection_options
 from src._2_labeling_options import labeling_traces
 from src._3_DL_training import train_pipeline_singletask_dl
+from src._4_distinguisher import perform_joint_attack
 from src.net import create_hyperparameter_space, MLP, CNN
-from src.utils import load_chipwhisperer, check_accuracy, predict_attack_traces, perform_attacks, NTGE_fn
+from src.utils import load_chipwhisperer, check_accuracy, predict_attack_traces, perform_attacks, NTGE_fn, \
+    obtain_var_noise
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -29,6 +32,7 @@ if __name__ == '__main__':
     save_root = result_root + "blind_" + dataset + "_"+ leakage + "_"+labeling_type+"/"
     image_root = result_root + "images/"
     poi_root = result_root + "poi/"
+    theorectical_histogram_root = result_root + "theorectical_histogram/"
     if not os.path.exists(result_root):
         os.mkdir(result_root)
     if not os.path.exists(save_root):
@@ -39,6 +43,8 @@ if __name__ == '__main__':
         os.mkdir(image_root)
     if not os.path.exists(poi_root):
         os.mkdir(poi_root)
+    if not os.path.exists(theorectical_histogram_root):
+        os.mkdir(theorectical_histogram_root)
     print("save_root:", save_root)
     print("using cuda:", torch.cuda.is_available())
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -50,25 +56,27 @@ if __name__ == '__main__':
         num_bits = 8
         num_branch = 2
         classes = (num_bits+1)**num_branch
+        L_profiling = np.array([plt_profiling, Y_profiling]).T
+
+
     nb_poi = 50
     total_samplept = X_profiling.shape[1]
     number_of_traces = X_profiling.shape[0]
-    L_profiling = np.array([Y_profiling, plt_profiling]).T
-    #PoI Selection
-    save_poi = False
-    if dataset == "Chipwhisperer":
-        if save_poi == True:
-            poi_xors = PoI_Selection_AES(nb_poi, total_samplept, number_of_traces, X_profiling, L_profiling, image_root, plot_cpa_image=True)
-            np.save(poi_root + "poi_AES_"+poi_selection_mode+".npy", poi_xors)
-        else:
-            poi_xors = np.load(poi_root + "poi_AES_" + poi_selection_mode + ".npy", allow_pickle=True)
+    ######################################################################Phase 1 Compute Theoretical Distribution #############################################################################################3
+    ##############################################################################################################################################################################################
+    theoretical_histogram = obtain_theoretical_histogram(dataset, theorectical_histogram_root)
+    ######################################################################Phase 2 Obtain Empirical Distribution #############################################################################################3
+    ##############################################################################################################################################################################################
+    #2.1 PoI Selection
+    poi_xors = poi_selection_options(dataset, nb_poi, total_samplept, number_of_traces, X_profiling, L_profiling, image_root,poi_root, poi_selection_mode, plot_cpa_image=True, save_poi=False)
 
-    print("poi_xors:", poi_xors.shape)
-
+    #2.2 Labeling Training traces.
     Y_train_solo_all_hw = labeling_traces(X_profiling, poi_xors, num_bits, save_root, labeling_type, poi_selection_mode, dataset, num_branch, save_labels=True)
     print("Y_train_solo_all_hw:", Y_train_solo_all_hw, Y_train_solo_all_hw.shape)  # [nb_traces, 4]
-
-    ######################################################################Training DNN #############################################################################################3
+    Y_train_combined_hws = Y_train_solo_all_hw[:, 0]
+    for i in range(1, Y_train_solo_all_hw.shape[1]):
+        Y_train_combined_hws += Y_train_solo_all_hw[:, i] * ((num_bits + 1)**i)
+    ######################################################################    Training DNN #############################################################################################3
     total_num_model = 100
     save_config = False
     for model_type in ["mlp", "cnn"]:
@@ -96,8 +104,8 @@ if __name__ == '__main__':
                 # print("combined_hws: ", combined_hws, combined_hws.shape)
                 # print("joint_hw_train: ", joint_hw_train, joint_hw_train.shape)
                 if trainning_model == True:
-                    model = train_pipeline_singletask_dl(config, epochs, X_profiling, Y=Y_noisy,
-                                                         classes=classes,
+                    model = train_pipeline_singletask_dl(config, epochs, X_profiling, Y=Y_train_combined_hws,
+                                                         classes = classes,
                                                          device=device, model_type=model_type, loss_type=loss_type,
                                                          dropout=config["dropout"])
                     torch.save(model.state_dict(),
@@ -113,9 +121,27 @@ if __name__ == '__main__':
                         torch.load(trained_model_root + "model_" + str(model_idx) + "_" + loss_type + ".pth",
                                    map_location=torch.device(device)))
 
-                # 4. Apply the Disinguisher
 
-                predictions_wo_softmax = predict_attack_traces(model, X_attack, device, interval_nb_trace=100)
-                print(model_type, " model_idx: ", model_idx, " loss_type:", loss_type)
-                predictions = F.softmax(predictions_wo_softmax, dim=1)
-                predictions = predictions.cpu().detach().numpy()
+
+                    ######################################################################Phase 3 Compare Theoretical and Empirical Distribution #############################################################################################3
+                    ##############################################################################################################################################################################################
+                    predictions_wo_softmax = predict_attack_traces(model, X_attack, device, interval_nb_trace=100)
+                    print(model_type, " model_idx: ", model_idx, " loss_type:", loss_type)
+                    # predictions = F.softmax(predictions_wo_softmax, dim=1)
+                    # predictions = predictions.cpu().detach().numpy()
+                    jointed_predicted_hw = np.argmax(predictions_wo_softmax, axis=1)
+                    if num_branch == 2:
+                        preds0 = jointed_predicted_hw % (num_bits + 1)
+                        preds1 = jointed_predicted_hw // (num_bits + 1)
+                    elif num_branch == 3:
+                        preds0 = jointed_predicted_hw // (num_bits + 1)
+                        preds1 = ((jointed_predicted_hw - preds0)// (num_bits + 1)) % (num_bits + 1)
+                        preds2 = ((jointed_predicted_hw - preds0 - (num_bits + 1) * preds1) // (num_bits + 1) ** 2) % (num_bits + 1)
+                    print("jointed_predicted_hw:", jointed_predicted_hw, jointed_predicted_hw.shape)
+                    print("preds0, preds1:", preds0, preds1)
+                    print("preds0, preds1:", preds0.shape, preds1.shape)
+                    predicted_hw = np.array([preds0, preds1]).T
+
+                    var_noise_attack = obtain_var_noise(X_attack)
+                    GE,NTGE,SR = perform_joint_attack(nb_traces_attacks, nb_attacks, predicted_hw, theoretical_histogram, var_noise_attack,correct_key, dataset)
+                    np.save(trained_model_root + f"GE_SR_{dataset}_{leakage}_{labeling_type}_model{model_idx}_{model_type}_epochs{epochs}_{loss_type}.npy", {"GE": GE,  "NTGE": NTGE, "SR": SR})

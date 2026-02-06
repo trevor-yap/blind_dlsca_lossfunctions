@@ -67,7 +67,7 @@ def Slice_Clustering(center_traces_full, dataset, num_branch):
 
     return np.array(all_majority).T
 
-def Multi_Point_Cluster_Labeling(traces, poi_xors, dataset, num_bits = 9, num_branch =2):
+def Multi_Point_Cluster_Labeling(traces, poi_xors, dataset, num_bits = 8, num_branch =2):
 
     print("traces: ", traces.shape)
     print("poi_xors: ", poi_xors.shape)

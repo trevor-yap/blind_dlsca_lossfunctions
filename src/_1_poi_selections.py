@@ -34,3 +34,17 @@ def PoI_Selection_AES(nb_poi, total_samplept, number_of_traces, traces, labels, 
                   mode="expand", borderaxespad=0, ncol=4, prop={'size': 20})
         plt.savefig(image_root + 'CPA_xor_AES.png')
     return np.array(poi_xors)
+
+
+
+def poi_selection_options(dataset, nb_poi, total_samplept, number_of_traces, X_profiling, L_profiling, image_root,poi_root, poi_selection_mode, plot_cpa_image=True,  save_poi = False):
+    if poi_selection_mode == "correlation":
+        if dataset == "Chipwhisperer":
+            if save_poi == True:
+                poi_xors = PoI_Selection_AES(nb_poi, total_samplept, number_of_traces, X_profiling, L_profiling, image_root, plot_cpa_image=True)
+                np.save(poi_root + "poi_AES_"+poi_selection_mode+".npy", poi_xors)
+            else:
+                poi_xors = np.load(poi_root + "poi_AES_" + poi_selection_mode + ".npy", allow_pickle=True)
+
+    print("poi_xors:", poi_xors.shape)
+    return poi_xors

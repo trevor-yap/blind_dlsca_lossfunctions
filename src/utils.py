@@ -41,6 +41,9 @@ AES_Sbox_inv =  np.array([
     0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d
 ])
 
+def HW(s):
+    return bin(int(s)).count("1")
+
 hw = [bin(x).count("1") for x in range(256)]
 def calculate_HW(data):
     return [hw[int(s)] for s in data]
@@ -181,3 +184,10 @@ def NTGE_fn(GE):
         elif GE[i] == 0:
             NTGE = i
     return NTGE
+
+
+def obtain_var_noise(X_attack):
+    var_array = np.var(X_attack, axis=0)
+    var_noise = np.min(var_array)  # noise when there is no operation appear.
+    print("var_noise:", var_noise)
+    return var_noise
