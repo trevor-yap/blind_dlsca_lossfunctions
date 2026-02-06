@@ -190,4 +190,6 @@ def obtain_var_noise(X_attack):
     var_array = np.var(X_attack, axis=0)
     var_noise = np.min(var_array)  # noise when there is no operation appear.
     print("var_noise:", var_noise)
+    if var_noise == 0:
+        var_noise= 0.0001
     return var_noise
