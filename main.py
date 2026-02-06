@@ -129,9 +129,9 @@ if __name__ == '__main__':
                 ##############################################################################################################################################################################################
                 predictions_wo_softmax = predict_attack_traces(model, X_attack, device, interval_nb_trace=100)
                 print(model_type, " model_idx: ", model_idx, " loss_type:", loss_type)
-                # predictions = F.softmax(predictions_wo_softmax, dim=1)
-                # predictions = predictions.cpu().detach().numpy()
-                jointed_predicted_hw = np.argmax(predictions_wo_softmax, axis=1)
+                predictions = F.softmax(predictions_wo_softmax, dim=1)
+                predictions = predictions.cpu().detach().numpy()
+                jointed_predicted_hw = np.argmax(predictions, axis=1)
                 if num_branch == 2:
                     preds0 = jointed_predicted_hw % (num_bits + 1)
                     preds1 = jointed_predicted_hw // (num_bits + 1)
