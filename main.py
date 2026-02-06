@@ -76,7 +76,7 @@ if __name__ == '__main__':
     Y_train_combined_hws = Y_train_solo_all_hw[:, 0]
     for i in range(1, Y_train_solo_all_hw.shape[1]):
         Y_train_combined_hws += Y_train_solo_all_hw[:, i] * ((num_bits + 1)**i)
-    print("Y_train_combined_hws:", Y_train_combined_hws, Y_train_combined_hws.shape)  # [nb_traces, 4]
+    print("Y_train_combined_hws:", Y_train_combined_hws, Y_train_combined_hws.shape)  # [nb_traces,]
 
     ######################################################################    Training DNN #############################################################################################3
     total_num_model = 100
@@ -139,7 +139,7 @@ if __name__ == '__main__':
                     preds0 = jointed_predicted_hw % (num_bits + 1)
                     preds1 = ((jointed_predicted_hw - preds0)// (num_bits + 1)) % (num_bits + 1)
                     preds2 = ((jointed_predicted_hw - preds0 - (num_bits + 1) * preds1) // (num_bits + 1) ** 2) % (num_bits + 1)
-                print("predictions_wo_softmax:", predictions_wo_softmax, predictions_wo_softmax.shape)
+                print("predictions:", predictions, predictions.shape)
                 print("jointed_predicted_hw:", jointed_predicted_hw, jointed_predicted_hw.shape)
                 print("preds0, preds1:", preds0, preds1)
                 print("preds0, preds1:", preds0.shape, preds1.shape)
