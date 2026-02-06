@@ -46,5 +46,5 @@ def poi_selection_options(dataset, nb_poi, total_samplept, number_of_traces, X_p
             else:
                 poi_xors = np.load(poi_root + "poi_AES_" + poi_selection_mode + ".npy", allow_pickle=True)
 
-    print("poi_xors:", poi_xors.shape)
+    print("poi_xors:",poi_xors, poi_xors.shape)
     return poi_xors

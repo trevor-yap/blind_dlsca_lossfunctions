@@ -93,8 +93,6 @@ if __name__ == '__main__':
     for model_type in ["mlp", "cnn"]:
         for loss_type in ["CCE", "PEER_LOSS_CCE"]:  # , "PEER_LOSS_CCE"
             for model_idx in range(total_num_model):
-
-
                 config = np.load(model_config_root + "configuration" + str(model_idx) + "_" + model_type + ".npy",
                                  allow_pickle=True).item()
 

@@ -75,6 +75,8 @@ def Multi_Point_Cluster_Labeling(traces, poi_xors, dataset, num_bits = 8, num_br
     new_labels = np.zeros((traces.shape[0], num_branch))
     if num_branch == 2:
         X_train_joint = np.hstack((traces[:, poi_xors[0]], traces[:, poi_xors[1]]))
+        print("traces[:, poi_xors[0]]", traces[:, poi_xors[0]])
+        print("X_train_joint: ", X_train_joint)
     elif num_branch == 3:
         X_train_joint = np.hstack((traces[:, poi_xors[0]], traces[:, poi_xors[1]], traces[:, poi_xors[2]]))
     print("X_train_joint:", X_train_joint.shape)
