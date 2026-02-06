@@ -123,25 +123,25 @@ if __name__ == '__main__':
 
 
 
-                    ######################################################################Phase 3 Compare Theoretical and Empirical Distribution #############################################################################################3
-                    ##############################################################################################################################################################################################
-                    predictions_wo_softmax = predict_attack_traces(model, X_attack, device, interval_nb_trace=100)
-                    print(model_type, " model_idx: ", model_idx, " loss_type:", loss_type)
-                    # predictions = F.softmax(predictions_wo_softmax, dim=1)
-                    # predictions = predictions.cpu().detach().numpy()
-                    jointed_predicted_hw = np.argmax(predictions_wo_softmax, axis=1)
-                    if num_branch == 2:
-                        preds0 = jointed_predicted_hw % (num_bits + 1)
-                        preds1 = jointed_predicted_hw // (num_bits + 1)
-                    elif num_branch == 3:
-                        preds0 = jointed_predicted_hw // (num_bits + 1)
-                        preds1 = ((jointed_predicted_hw - preds0)// (num_bits + 1)) % (num_bits + 1)
-                        preds2 = ((jointed_predicted_hw - preds0 - (num_bits + 1) * preds1) // (num_bits + 1) ** 2) % (num_bits + 1)
-                    print("jointed_predicted_hw:", jointed_predicted_hw, jointed_predicted_hw.shape)
-                    print("preds0, preds1:", preds0, preds1)
-                    print("preds0, preds1:", preds0.shape, preds1.shape)
-                    predicted_hw = np.array([preds0, preds1]).T
+                ######################################################################Phase 3 Compare Theoretical and Empirical Distribution #############################################################################################3
+                ##############################################################################################################################################################################################
+                predictions_wo_softmax = predict_attack_traces(model, X_attack, device, interval_nb_trace=100)
+                print(model_type, " model_idx: ", model_idx, " loss_type:", loss_type)
+                # predictions = F.softmax(predictions_wo_softmax, dim=1)
+                # predictions = predictions.cpu().detach().numpy()
+                jointed_predicted_hw = np.argmax(predictions_wo_softmax, axis=1)
+                if num_branch == 2:
+                    preds0 = jointed_predicted_hw % (num_bits + 1)
+                    preds1 = jointed_predicted_hw // (num_bits + 1)
+                elif num_branch == 3:
+                    preds0 = jointed_predicted_hw // (num_bits + 1)
+                    preds1 = ((jointed_predicted_hw - preds0)// (num_bits + 1)) % (num_bits + 1)
+                    preds2 = ((jointed_predicted_hw - preds0 - (num_bits + 1) * preds1) // (num_bits + 1) ** 2) % (num_bits + 1)
+                print("jointed_predicted_hw:", jointed_predicted_hw, jointed_predicted_hw.shape)
+                print("preds0, preds1:", preds0, preds1)
+                print("preds0, preds1:", preds0.shape, preds1.shape)
+                predicted_hw = np.array([preds0, preds1]).T
 
-                    var_noise_attack = obtain_var_noise(X_attack)
-                    GE,NTGE,SR = perform_joint_attack(nb_traces_attacks, nb_attacks, predicted_hw, theoretical_histogram, var_noise_attack,correct_key, dataset)
-                    np.save(trained_model_root + f"GE_SR_{dataset}_{leakage}_{labeling_type}_model{model_idx}_{model_type}_epochs{epochs}_{loss_type}.npy", {"GE": GE,  "NTGE": NTGE, "SR": SR})
+                var_noise_attack = obtain_var_noise(X_attack)
+                GE,NTGE,SR = perform_joint_attack(nb_traces_attacks, nb_attacks, predicted_hw, theoretical_histogram, var_noise_attack,correct_key, dataset)
+                np.save(trained_model_root + f"GE_SR_{dataset}_{leakage}_{labeling_type}_model{model_idx}_{model_type}_epochs{epochs}_{loss_type}.npy", {"GE": GE,  "NTGE": NTGE, "SR": SR})
