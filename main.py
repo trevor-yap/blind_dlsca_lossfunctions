@@ -89,7 +89,7 @@ if __name__ == '__main__':
                 np.save(model_config_root + "configuration" + str(model_idx) + "_" + model_type + ".npy",
                         config)
             print("Done saving")
-    trainning_model = False
+    trainning_model = True
     for model_type in ["mlp", "cnn"]:
         for loss_type in ["CCE", "PEER_LOSS_CCE"]:  # , "PEER_LOSS_CCE"
             for model_idx in range(total_num_model):
