@@ -95,7 +95,7 @@ def Multi_Point_Cluster_Labeling(traces, poi_xors, dataset, num_bits = 9, num_br
     for cluster in range(n_clusters):
         cluster_label = empirical_hws[cluster]
         new_labels[clusters_joint == cluster] = cluster_label
-
+    print("new_labels", new_labels.shape)
     return new_labels
 
 
