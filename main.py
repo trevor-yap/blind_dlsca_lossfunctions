@@ -14,7 +14,7 @@ from src.utils import load_chipwhisperer, check_accuracy, predict_attack_traces,
 if __name__ == '__main__':
     dataset = 'Chipwhisperer'
     leakage = "HW"
-    labeling_type = "MultiPointSlicing"
+    labeling_type = "MultiPointClustering"
     epochs = 50
     nb_attacks = 100
     nb_traces_attacks = 1700
@@ -62,9 +62,9 @@ if __name__ == '__main__':
         else:
             poi_xors = np.load(poi_root + "poi_AES_" + poi_selection_mode + ".npy", allow_pickle=True)
 
-    print("poi_xors:", poi_xors, poi_xors.shape)
-    print(ok)
-    Y_noisy =labeling_traces(X_profiling, poi_xors, num_bits, save_root, labeling_type, poi_selection_mode,save_labels=True)
+    print("poi_xors:", poi_xors.shape)
+
+    Y_noisy = labeling_traces(X_profiling, poi_xors, num_bits, save_root, labeling_type, poi_selection_mode, dataset, save_labels=True)
 
     check_accuracy(Y_profiling, Y_noisy)
 
