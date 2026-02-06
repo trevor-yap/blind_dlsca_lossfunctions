@@ -18,7 +18,7 @@ if __name__ == '__main__':
     dataset = 'Chipwhisperer'
     leakage = "HW"
     labeling_type = "MultiPointClustering"
-    epochs = 50
+    epochs = 100
     nb_attacks = 100
     nb_traces_attacks = 1700
     poi_selection_mode = "correlation"
