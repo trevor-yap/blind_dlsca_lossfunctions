@@ -134,9 +134,10 @@ if __name__ == '__main__':
                     preds0 = jointed_predicted_hw % (num_bits + 1)
                     preds1 = jointed_predicted_hw // (num_bits + 1)
                 elif num_branch == 3:
-                    preds0 = jointed_predicted_hw // (num_bits + 1)
+                    preds0 = jointed_predicted_hw % (num_bits + 1)
                     preds1 = ((jointed_predicted_hw - preds0)// (num_bits + 1)) % (num_bits + 1)
                     preds2 = ((jointed_predicted_hw - preds0 - (num_bits + 1) * preds1) // (num_bits + 1) ** 2) % (num_bits + 1)
+                print("predictions_wo_softmax:", predictions_wo_softmax, predictions_wo_softmax.shape)
                 print("jointed_predicted_hw:", jointed_predicted_hw, jointed_predicted_hw.shape)
                 print("preds0, preds1:", preds0, preds1)
                 print("preds0, preds1:", preds0.shape, preds1.shape)
