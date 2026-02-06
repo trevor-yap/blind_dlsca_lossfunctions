@@ -3,6 +3,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 import torch
 import torch.nn.functional as F
+
+from src._1_poi_selections import PoI_Selection_AES
 from src._2_labeling_options import labeling_traces
 from src._3_DL_training import train_pipeline_singletask_dl
 from src.net import create_hyperparameter_space, MLP, CNN
@@ -43,28 +45,16 @@ if __name__ == '__main__':
         data_root = 'Dataset/Chipwhisperer/'
         (X_profiling, X_attack), (Y_profiling, Y_attack), (plt_profiling,plt_attack), correct_key = load_chipwhisperer(root + data_root, leakage_model=leakage)
         num_bits = 8
-    classes = num_bits+1
-
+    classes = (num_bits+1)**2
+    nb_poi = 50
+    total_samplept = X_profiling.shape[1]
+    number_of_traces = X_profiling.shape[0]
+    L_profiling = np.array([Y_profiling, plt_profiling]).T
     #PoI Selection
-    if poi_selection_mode == "Variance_Segment": #acc: 0.069875
-        variance_trace = np.var(X_profiling, axis = 0)
-        mean_trace = np.mean(X_profiling, axis = 0)
-
-        save_fig_poi_var = False
-        if save_fig_poi_var == True:
-            fig, ax = plt.subplots(figsize=(12, 9))
-            x_axis = [i for i in range(variance_trace.shape[0])]
-            ax.plot(x_axis, variance_trace, c="red", label="Variance")
-            plt.savefig(image_root + 'Variance.png')
-            plt.close(fig)
-        poi_highest_variance = np.argmax(variance_trace)
-        # print(poi_highest_variance)
-        poi_xors = np.array([i for i in range(poi_highest_variance, X_profiling.shape[1],1)])
-    elif poi_selection_mode == "Variance_Threshold": #0.112375
-        variance_trace = np.var(X_profiling, axis=0)
-        mean_trace = np.mean(X_profiling, axis=0)
-        poi_xors = np.array(np.where(variance_trace>=0.0006))[0]
+    if dataset == "Chipwhisperer":
+        poi_xors = PoI_Selection_AES(nb_poi, total_samplept, number_of_traces, X_profiling, L_profiling, image_root, plot_cpa_image=True)
     print("poi_xors:", poi_xors, poi_xors.shape)
+    print(ok)
     Y_noisy =labeling_traces(X_profiling, poi_xors, num_bits, save_root, labeling_type, poi_selection_mode,save_labels=True)
 
     check_accuracy(Y_profiling, Y_noisy)
@@ -83,8 +73,9 @@ if __name__ == '__main__':
             print("Done saving")
     trainning_model = True
     for model_type in ["mlp", "cnn"]:
-        for model_idx in range(total_num_model):
-            for loss_type in ["CCE", "PEER_LOSS_CCE"]:  # , "PEER_LOSS_CCE"
+        for loss_type in ["CCE", "PEER_LOSS_CCE"]:  # , "PEER_LOSS_CCE"
+            for model_idx in range(total_num_model):
+
 
                 config = np.load(model_config_root + "configuration" + str(model_idx) + "_" + model_type + ".npy",
                                  allow_pickle=True).item()
@@ -120,13 +111,3 @@ if __name__ == '__main__':
                 print(model_type, " model_idx: ", model_idx, " loss_type:", loss_type)
                 predictions = F.softmax(predictions_wo_softmax, dim=1)
                 predictions = predictions.cpu().detach().numpy()
-
-                GE, key_prob = perform_attacks(nb_traces_attacks, predictions, plt_attack, correct_key,
-                                               dataset=dataset,
-                                               nb_attacks=nb_attacks, shuffle=True, leakage=leakage)
-
-                print("GE", GE)
-                NTGE = NTGE_fn(GE)
-                print("NTGE", NTGE)
-                np.save(trained_model_root + f"GE_{model_type}_{labeling_type}_{model_idx}.npy",
-                        {"GE": GE, "NTGE": NTGE})
