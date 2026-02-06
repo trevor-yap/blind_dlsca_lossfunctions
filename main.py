@@ -67,7 +67,7 @@ if __name__ == '__main__':
     Y_noisy = labeling_traces(X_profiling, poi_xors, num_bits, save_root, labeling_type, poi_selection_mode, dataset, save_labels=True)
 
     check_accuracy(Y_profiling, Y_noisy)
-
+    print(ok)
 
     ######################################################################Training DNN #############################################################################################3
     total_num_model = 100
