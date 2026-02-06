@@ -72,10 +72,12 @@ if __name__ == '__main__':
 
     #2.2 Labeling Training traces.
     Y_train_solo_all_hw = labeling_traces(X_profiling, poi_xors, num_bits, save_root, labeling_type, poi_selection_mode, dataset, num_branch, save_labels=True)
-    print("Y_train_solo_all_hw:", Y_train_solo_all_hw, Y_train_solo_all_hw.shape)  # [nb_traces, 4]
+    print("Y_train_solo_all_hw:", Y_train_solo_all_hw, Y_train_solo_all_hw.shape)  # [nb_traces, 2]
     Y_train_combined_hws = Y_train_solo_all_hw[:, 0]
     for i in range(1, Y_train_solo_all_hw.shape[1]):
         Y_train_combined_hws += Y_train_solo_all_hw[:, i] * ((num_bits + 1)**i)
+    print("Y_train_combined_hws:", Y_train_combined_hws, Y_train_combined_hws.shape)  # [nb_traces, 4]
+
     ######################################################################    Training DNN #############################################################################################3
     total_num_model = 100
     save_config = False
@@ -87,7 +89,7 @@ if __name__ == '__main__':
                 np.save(model_config_root + "configuration" + str(model_idx) + "_" + model_type + ".npy",
                         config)
             print("Done saving")
-    trainning_model = True
+    trainning_model = False
     for model_type in ["mlp", "cnn"]:
         for loss_type in ["CCE", "PEER_LOSS_CCE"]:  # , "PEER_LOSS_CCE"
             for model_idx in range(total_num_model):
