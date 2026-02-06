@@ -42,7 +42,7 @@ if __name__ == '__main__':
         for model_idx in range(total_num_model):
             for loss_type in ["CCE", "PEER_LOSS_CCE"]:  # , "PEER_LOSS_CCE"
 
-                trained_model_root = result_root + f'result_{model_type}_{epochs}_{loss_type}/'
+                trained_model_root = save_root + f'result_{model_type}_{epochs}_{loss_type}/'
 
 
                 result = np.load(trained_model_root + f"GE_{model_type}_{labeling_type}_{model_idx}.npy",

@@ -18,16 +18,17 @@ if __name__ == '__main__':
     epochs = 50
     nb_attacks = 100
     nb_traces_attacks = 1700
-    poi_selection_mode = "Variance_Threshold" #Variance_Segment, Variance_Threshold
+    poi_selection_mode = "correlation"
 
 
 
 
 
     result_root = "./Result/"
-    save_root = result_root + "blind_" + dataset + "_"+ leakage + "_"+labeling_type+"/"
     model_config_root = result_root + "model_config/"
-    image_root = save_root + "images/"
+    save_root = result_root + "blind_" + dataset + "_"+ leakage + "_"+labeling_type+"/"
+    image_root = result_root + "images/"
+    poi_root = result_root + "poi/"
     if not os.path.exists(result_root):
         os.mkdir(result_root)
     if not os.path.exists(save_root):
@@ -36,6 +37,8 @@ if __name__ == '__main__':
         os.mkdir(model_config_root)
     if not os.path.exists(image_root):
         os.mkdir(image_root)
+    if not os.path.exists(poi_root):
+        os.mkdir(poi_root)
     print("save_root:", save_root)
     print("using cuda:", torch.cuda.is_available())
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -51,8 +54,14 @@ if __name__ == '__main__':
     number_of_traces = X_profiling.shape[0]
     L_profiling = np.array([Y_profiling, plt_profiling]).T
     #PoI Selection
+    save_poi = True
     if dataset == "Chipwhisperer":
-        poi_xors = PoI_Selection_AES(nb_poi, total_samplept, number_of_traces, X_profiling, L_profiling, image_root, plot_cpa_image=True)
+        if save_poi == True:
+            poi_xors = PoI_Selection_AES(nb_poi, total_samplept, number_of_traces, X_profiling, L_profiling, image_root, plot_cpa_image=True)
+            np.save(poi_root + "poi_AES_"+poi_selection_mode+".npy", poi_xors)
+        else:
+            poi_xors = np.load(poi_root + "poi_AES_" + poi_selection_mode + ".npy", allow_pickle=True)
+
     print("poi_xors:", poi_xors, poi_xors.shape)
     print(ok)
     Y_noisy =labeling_traces(X_profiling, poi_xors, num_bits, save_root, labeling_type, poi_selection_mode,save_labels=True)
@@ -80,7 +89,7 @@ if __name__ == '__main__':
                 config = np.load(model_config_root + "configuration" + str(model_idx) + "_" + model_type + ".npy",
                                  allow_pickle=True).item()
 
-                trained_model_root = result_root + f'result_{model_type}_{epochs}_{loss_type}/'
+                trained_model_root = save_root + f'result_{model_type}_{epochs}_{loss_type}/'
                 if not os.path.exists(trained_model_root):
                     os.mkdir(trained_model_root)
                 # Train a DNN.
