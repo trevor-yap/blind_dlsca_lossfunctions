@@ -79,7 +79,7 @@ def Multi_Point_Cluster_Labeling(traces, poi_xors, dataset, num_bits = 9, num_br
         X_train_joint = np.hstack((traces[:, poi_xors[0]], traces[:, poi_xors[1]], traces[:, poi_xors[2]]))
     print("X_train_joint:", X_train_joint.shape)
     #Fit the Gaussian Mixture for one branch
-    n_clusters = num_bits**num_branch
+    n_clusters = (num_bits+1)**num_branch
     model_joint = GaussianMixture(n_components=n_clusters, random_state=0)
     model_joint.fit(X_train_joint[:1000])
     clusters_joint = model_joint.predict(X_train_joint)
@@ -95,15 +95,15 @@ def Multi_Point_Cluster_Labeling(traces, poi_xors, dataset, num_bits = 9, num_br
     for cluster in range(n_clusters):
         cluster_label = empirical_hws[cluster]
         new_labels[clusters_joint == cluster] = cluster_label
-    print("new_labels", new_labels.shape)
+    # print("new_labels", new_labels.shape)
     return new_labels
 
 
 
-def labeling_traces(X_train,poi_xors, num_bits,  save_root, labeling_type, poi_selection_mode, dataset, save_labels = False):
+def labeling_traces(X_train,poi_xors, num_bits,  save_root, labeling_type, poi_selection_mode, dataset,num_branch, save_labels = False):
     if save_labels == True:
         if labeling_type == 'MultiPointClustering':
-            Y_train_solo_all_hw = Multi_Point_Cluster_Labeling(X_train, poi_xors,dataset, num_bits)
+            Y_train_solo_all_hw = Multi_Point_Cluster_Labeling(X_train, poi_xors, dataset, num_bits, num_branch)
 
         np.save(save_root + f"{labeling_type}_empirical_hw_{poi_selection_mode}_solo.npy", Y_train_solo_all_hw)
     else:

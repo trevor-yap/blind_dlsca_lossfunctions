@@ -48,7 +48,8 @@ if __name__ == '__main__':
         data_root = 'Dataset/Chipwhisperer/'
         (X_profiling, X_attack), (Y_profiling, Y_attack), (plt_profiling,plt_attack), correct_key = load_chipwhisperer(root + data_root, leakage_model=leakage)
         num_bits = 8
-    classes = (num_bits+1)**2
+        num_branch = 2
+        classes = (num_bits+1)**num_branch
     nb_poi = 50
     total_samplept = X_profiling.shape[1]
     number_of_traces = X_profiling.shape[0]
@@ -64,10 +65,8 @@ if __name__ == '__main__':
 
     print("poi_xors:", poi_xors.shape)
 
-    Y_noisy = labeling_traces(X_profiling, poi_xors, num_bits, save_root, labeling_type, poi_selection_mode, dataset, save_labels=True)
-
-    check_accuracy(Y_profiling, Y_noisy)
-    print(ok)
+    Y_train_solo_all_hw = labeling_traces(X_profiling, poi_xors, num_bits, save_root, labeling_type, poi_selection_mode, dataset, num_branch, save_labels=True)
+    print("Y_train_solo_all_hw:", Y_train_solo_all_hw, Y_train_solo_all_hw.shape)  # [nb_traces, 4]
 
     ######################################################################Training DNN #############################################################################################3
     total_num_model = 100
