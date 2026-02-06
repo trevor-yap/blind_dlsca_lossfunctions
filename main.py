@@ -54,7 +54,7 @@ if __name__ == '__main__':
     number_of_traces = X_profiling.shape[0]
     L_profiling = np.array([Y_profiling, plt_profiling]).T
     #PoI Selection
-    save_poi = True
+    save_poi = False
     if dataset == "Chipwhisperer":
         if save_poi == True:
             poi_xors = PoI_Selection_AES(nb_poi, total_samplept, number_of_traces, X_profiling, L_profiling, image_root, plot_cpa_image=True)

@@ -83,6 +83,7 @@ def Multi_Point_Cluster_Labeling(traces, poi_xors, dataset, num_bits = 9, num_br
     model_joint = GaussianMixture(n_components=n_clusters, random_state=0)
     model_joint.fit(X_train_joint[:1000])
     clusters_joint = model_joint.predict(X_train_joint)
+    print("clusters_joint", clusters_joint, clusters_joint.shape)
     center_traces = np.zeros((n_clusters, num_poi))
     for cluster in range(n_clusters):
         cluster_members = X_train_joint[clusters_joint == cluster, :]
