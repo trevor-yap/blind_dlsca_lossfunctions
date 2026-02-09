@@ -91,7 +91,7 @@ if __name__ == '__main__':
             print("Done saving")
     trainning_model = True
     for model_type in ["mlp", "cnn"]:
-        for loss_type in ['MAE']:  # "CCE", "PEER_LOSS_CCE"
+        for loss_type in ['MAE', 'GCE', 'NCE', 'FL', 'NFL']:  # "CCE", "PEER_LOSS_CCE"
             for model_idx in range(total_num_model):
                 config = np.load(model_config_root + "configuration" + str(model_idx) + "_" + model_type + ".npy",
                                  allow_pickle=True).item()
