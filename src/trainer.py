@@ -2,6 +2,8 @@ import numpy as np
 import torch
 import time
 from torch import nn
+
+from src.loss_functions import MeanAbsoluteError, GeneralizedCrossEntropy, NormalizedCrossEntropy, NormalizedFocalLoss
 from src.net import MLP, CNN, weight_init
 
 def f_alpha(epoch, r = 0.1):
@@ -50,6 +52,14 @@ def trainer_singletask_blind(config,num_epochs,num_sample_pts, dataloaders, data
     #     criterion = nn.MSELoss()
     if "CCE" in loss_type:
         criterion = nn.CrossEntropyLoss()
+    if "MAE" == loss_type:
+        criterion = MeanAbsoluteError(num_classes= classes)
+    elif "GCE" == loss_type:
+        criterion = GeneralizedCrossEntropy(num_classes= classes, q=0.5)
+    elif "NCE" == loss_type:
+        criterion = NormalizedCrossEntropy(num_classes= classes)
+    elif "NFL" == loss_type:
+        criterion = NormalizedFocalLoss(num_classes=classes,gamma=0)
 
     scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer, base_lr=lr, max_lr=5*lr,
                                                   step_size_up=10, cycle_momentum=False)
