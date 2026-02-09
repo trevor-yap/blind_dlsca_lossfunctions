@@ -15,6 +15,17 @@ from src.utils import load_chipwhisperer, check_accuracy, predict_attack_traces,
     obtain_var_noise
 
 
+def compute_noise_transition_matrix(pred, actual, classes):
+    noise_transition_matrix = np.zeros((classes,classes))
+    for i in range(actual.shape[0]):
+        noise_transition_matrix[actual[i], pred[i]] += 1
+    for j in range(noise_transition_matrix.shape[0]):
+        if np.sum(noise_transition_matrix[j,:]) != 0:
+            noise_transition_matrix[j,:] = noise_transition_matrix[j,:]/np.sum(noise_transition_matrix[j,:])
+
+    return noise_transition_matrix
+
+
 
 
 if __name__ == '__main__':
@@ -87,4 +98,6 @@ if __name__ == '__main__':
         L_train_combined_hws += L_profiling[:, i] * ((num_bits + 1)**i)
     print("L_train_combined_hws:", L_train_combined_hws, L_train_combined_hws.shape)  # [nb_traces,]
 
-
+    noise_transition_matrix = compute_noise_transition_matrix(pred = Y_train_combined_hws , actual= L_train_combined_hws, classes= classes)
+    np.set_printoptions(threshold=np.inf)
+    print("noise_transition_matrix:", noise_transition_matrix)
