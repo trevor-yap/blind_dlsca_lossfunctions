@@ -45,7 +45,7 @@ if __name__ == '__main__':
                 trained_model_root = save_root + f'result_{model_type}_{epochs}_{loss_type}/'
 
 
-                result = np.load(trained_model_root + f"GE_{model_type}_{labeling_type}_{model_idx}.npy",
+                result = np.load(trained_model_root + f"GE_SR_{dataset}_{leakage}_{labeling_type}_model{model_idx}_{model_type}_epochs{epochs}_{loss_type}.npy",
                        allow_pickle=True).item()
                 GE = result["GE"]
                 NTGE = result["NTGE"]
