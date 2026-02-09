@@ -15,11 +15,10 @@ from src.utils import load_chipwhisperer, check_accuracy, predict_attack_traces,
 if __name__ == '__main__':
     dataset = 'Chipwhisperer'
     leakage = "HW"
-    labeling_type = "MultiPointSlicing"
+    labeling_type = "MultiPointClustering"
     epochs = 50
     nb_attacks = 100
     nb_traces_attacks = 1700
-    poi_selection_mode = "Variance_Threshold" #Variance_Segment, Variance_Threshold
 
 
 
