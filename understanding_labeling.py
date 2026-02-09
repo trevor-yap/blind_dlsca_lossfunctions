@@ -117,7 +117,7 @@ if __name__ == '__main__':
     im = ax.imshow(noise_transition_matrix_m)
     for i in range(9):
         for j in range(9):
-            text = ax.text(j, i, noise_transition_matrix_m[i, j], ha="center", va="center", color="w")
+            text = ax.text(j, i, np.round(noise_transition_matrix_m[i, j],decimal=2), ha="center", va="center", color="w")
 
     fig.tight_layout()
     plt.savefig(image_root + f"noise_transition_matrix_{dataset}_m.png")
