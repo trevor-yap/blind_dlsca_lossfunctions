@@ -4,7 +4,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import torch
 import torch.nn.functional as F
-
+from copy import deepcopy
 from src._0_theorectical_histogram import obtain_theoretical_histogram
 from src._1_poi_selections import PoI_Selection_AES, poi_selection_options
 from src._2_labeling_options import labeling_traces
@@ -89,14 +89,14 @@ if __name__ == '__main__':
     #2.2 Labeling Training traces.
     Y_train_solo_all_hw = labeling_traces(X_profiling, poi_xors, num_bits, save_root, labeling_type, poi_selection_mode, dataset, num_branch, save_labels=False)
     print("Y_train_solo_all_hw:", Y_train_solo_all_hw, Y_train_solo_all_hw.shape)  # [nb_traces, 2]
-    # Y_train_combined_hws = Y_train_solo_all_hw[:, 0]
-    # for i in range(1, Y_train_solo_all_hw.shape[1]):
-    #     Y_train_combined_hws += Y_train_solo_all_hw[:, i] * ((num_bits + 1)**i)
-    # print("Y_train_combined_hws:", Y_train_combined_hws, Y_train_combined_hws.shape)  # [nb_traces,]
-    #
-    #
+    Y_train_combined_hws = deepcopy(Y_train_solo_all_hw[:, 0])
+    for i in range(1, Y_train_solo_all_hw.shape[1]):
+        Y_train_combined_hws += Y_train_solo_all_hw[:, i] * ((num_bits + 1)**i)
+    print("Y_train_combined_hws:", Y_train_combined_hws, Y_train_combined_hws.shape)  # [nb_traces,]
+
+
     print("L_profiling_HW:", L_profiling_HW, L_profiling_HW.shape)
-    L_train_combined_hws = L_profiling_HW[:, 0]
+    L_train_combined_hws = deepcopy(L_profiling_HW[:, 0])
     for i in range(1, L_profiling_HW.shape[1]):
         L_train_combined_hws += L_profiling_HW[:, i] * ((num_bits + 1)**i)
     print("L_train_combined_hws:", L_train_combined_hws, L_train_combined_hws.shape)  # [nb_traces,]

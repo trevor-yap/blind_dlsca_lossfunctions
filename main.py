@@ -1,4 +1,6 @@
 import os
+from copy import deepcopy
+
 import numpy as np
 from matplotlib import pyplot as plt
 import torch
@@ -73,7 +75,7 @@ if __name__ == '__main__':
     #2.2 Labeling Training traces.
     Y_train_solo_all_hw = labeling_traces(X_profiling, poi_xors, num_bits, save_root, labeling_type, poi_selection_mode, dataset, num_branch, save_labels=True)
     print("Y_train_solo_all_hw:", Y_train_solo_all_hw, Y_train_solo_all_hw.shape)  # [nb_traces, 2]
-    Y_train_combined_hws = Y_train_solo_all_hw[:, 0]
+    Y_train_combined_hws = deepcopy(Y_train_solo_all_hw[:, 0])
     for i in range(1, Y_train_solo_all_hw.shape[1]):
         Y_train_combined_hws += Y_train_solo_all_hw[:, i] * ((num_bits + 1)**i)
     print("Y_train_combined_hws:", Y_train_combined_hws, Y_train_combined_hws.shape)  # [nb_traces,]
