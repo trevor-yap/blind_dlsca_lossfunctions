@@ -12,7 +12,7 @@ from src._3_DL_training import train_pipeline_singletask_dl
 from src._4_distinguisher import perform_joint_attack
 from src.net import create_hyperparameter_space, MLP, CNN
 from src.utils import load_chipwhisperer, check_accuracy, predict_attack_traces, perform_attacks, NTGE_fn, \
-    obtain_var_noise
+    obtain_var_noise, calculate_HW
 
 
 def compute_noise_transition_matrix(pred, actual, classes):
@@ -73,6 +73,7 @@ if __name__ == '__main__':
         num_branch = 2
         classes = (num_bits+1)**num_branch
         L_profiling = np.array([plt_profiling, Y_profiling]).T
+        L_profiling_HW = np.array([calculate_HW(plt_profiling), calculate_HW(Y_profiling)]).T
 
 
     nb_poi = 50
@@ -95,9 +96,10 @@ if __name__ == '__main__':
     print("Y_train_combined_hws:", Y_train_combined_hws, Y_train_combined_hws.shape)  # [nb_traces,]
 
 
-    L_train_combined_hws = L_profiling[:, 0]
-    for i in range(1, L_profiling.shape[1]):
-        L_train_combined_hws += L_profiling[:, i] * ((num_bits + 1)**i)
+    print("L_train_combined_hws:", L_profiling_HW, L_profiling_HW.shape)
+    L_train_combined_hws = L_profiling_HW[:, 0]
+    for i in range(1, L_profiling_HW.shape[1]):
+        L_train_combined_hws += L_profiling_HW[:, i] * ((num_bits + 1)**i)
     print("L_train_combined_hws:", L_train_combined_hws, L_train_combined_hws.shape)  # [nb_traces,]
 
     noise_transition_matrix = compute_noise_transition_matrix(pred = Y_train_combined_hws , actual= L_train_combined_hws, classes= classes)
