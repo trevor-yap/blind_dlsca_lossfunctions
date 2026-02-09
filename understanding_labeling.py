@@ -95,12 +95,12 @@ if __name__ == '__main__':
     # print("Y_train_combined_hws:", Y_train_combined_hws, Y_train_combined_hws.shape)  # [nb_traces,]
     #
     #
-    print("L_train_combined_hws:", L_profiling_HW, L_profiling_HW.shape)
-    # L_train_combined_hws = L_profiling_HW[:, 0]
-    # for i in range(1, L_profiling_HW.shape[1]):
-    #     L_train_combined_hws += L_profiling_HW[:, i] * ((num_bits + 1)**i)
-    # print("L_train_combined_hws:", L_train_combined_hws, L_train_combined_hws.shape)  # [nb_traces,]
-
+    print("L_profiling_HW:", L_profiling_HW, L_profiling_HW.shape)
+    L_train_combined_hws = L_profiling_HW[:, 0]
+    for i in range(1, L_profiling_HW.shape[1]):
+        L_train_combined_hws += L_profiling_HW[:, i] * ((num_bits + 1)**i)
+    print("L_train_combined_hws:", L_train_combined_hws, L_train_combined_hws.shape)  # [nb_traces,]
+    print("L_profiling_HW:", L_profiling_HW, L_profiling_HW.shape)
     # noise_transition_matrix = compute_noise_transition_matrix(pred = Y_train_combined_hws , actual= L_train_combined_hws, classes= classes)
     # np.set_printoptions(threshold=np.inf)
     # print("noise_transition_matrix:", noise_transition_matrix)
