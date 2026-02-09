@@ -109,3 +109,26 @@ if __name__ == '__main__':
                                                               classes=9)
 
     print("noise_transition_matrix_m:", noise_transition_matrix_m)
+
+    noise_transition_matrix_y = compute_noise_transition_matrix(pred=Y_train_solo_all_hw[:, 1], actual=L_profiling_HW[:, 1],
+                                                              classes=9)
+    print("noise_transition_matrix_y:", noise_transition_matrix_y)
+    fig, ax = plt.subplots()
+    im = ax.imshow(noise_transition_matrix_m)
+    for i in range(9):
+        for j in range(9):
+            text = ax.text(j, i, noise_transition_matrix_m[i, j], ha="center", va="center", color="w")
+
+    fig.tight_layout()
+    plt.savefig(image_root + f"noise_transition_matrix_{dataset}_m.png")
+    plt.close()
+
+    fig, ax = plt.subplots()
+    im = ax.imshow(noise_transition_matrix_y)
+    for i in range(9):
+        for j in range(9):
+            text = ax.text(j, i, noise_transition_matrix_y[i, j], ha="center", va="center", color="w")
+
+    fig.tight_layout()
+    plt.savefig(image_root + f"noise_transition_matrix_{dataset}_y.png")
+    plt.close()
