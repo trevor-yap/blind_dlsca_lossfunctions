@@ -57,6 +57,7 @@ def Slice_Clustering(center_traces_full, dataset, num_branch):
                     class_considering += 1
                 if (class_considering < max_nb_class) and (num_per_class[class_considering] >= 1):
                     HW_4_1m[sorted_index[idx]] = class_considering
+                    print("class_considering", class_considering)
                     num_per_class[class_considering] = num_per_class[class_considering] - 1
                 elif class_considering >= max_nb_class:
                     HW_4_1m[sorted_index[idx]] = class_considering-1
