@@ -94,7 +94,7 @@ if __name__ == '__main__':
 
 
     L_train_combined_hws = L_profiling[:, 0]
-    for i in range(1, L_train_combined_hws.shape[1]):
+    for i in range(1, L_profiling.shape[1]):
         L_train_combined_hws += L_profiling[:, i] * ((num_bits + 1)**i)
     print("L_train_combined_hws:", L_train_combined_hws, L_train_combined_hws.shape)  # [nb_traces,]
 
