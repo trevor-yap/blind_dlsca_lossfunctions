@@ -103,4 +103,9 @@ if __name__ == '__main__':
 
     noise_transition_matrix = compute_noise_transition_matrix(pred = Y_train_combined_hws , actual= L_train_combined_hws, classes= classes)
     np.set_printoptions(threshold=np.inf)
-    print("noise_transition_matrix:", noise_transition_matrix)
+    # print("noise_transition_matrix:", noise_transition_matrix)
+
+    noise_transition_matrix_m = compute_noise_transition_matrix(pred=Y_train_solo_all_hw[:, 0], actual=L_profiling_HW[:, 0],
+                                                              classes=9)
+
+    print("noise_transition_matrix_m:", noise_transition_matrix_m)
