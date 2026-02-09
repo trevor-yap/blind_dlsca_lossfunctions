@@ -127,7 +127,7 @@ def trainer_singletask_blind(config,num_epochs,num_sample_pts, dataloaders, data
             labels.detach()
             # Here we calculate the GE, NTGE and the accuracy over the X_attack traces.
             print('{} Epoch Loss: {:.4f}'.format(phase, epoch_loss))
-            if epoch_loss < 1 and phase == 'val': #early stopping.
+            if epoch_loss < 1 and phase == 'val' and "PEER_LOSS" in loss_type: #early stopping.
                 model.eval()
                 return model
         model.eval()
