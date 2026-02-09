@@ -18,8 +18,8 @@ from src.utils import load_chipwhisperer, check_accuracy, predict_attack_traces,
 def compute_noise_transition_matrix(pred, actual, classes):
     noise_transition_matrix = np.zeros((classes,classes))
     for i in range(actual.shape[0]):
-        print("actual[i],", actual[i])
-        print("pred[i],", pred[i])
+        # print("actual[i],", actual[i])
+        # print("pred[i],", pred[i])
         noise_transition_matrix[int(actual[i]), int(pred[i])] += 1.0
     for j in range(noise_transition_matrix.shape[0]):
         if np.sum(noise_transition_matrix[j,:]) != 0:
