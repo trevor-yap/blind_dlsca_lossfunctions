@@ -20,8 +20,8 @@ def PoI_Selection_AES(nb_poi, total_samplept, number_of_traces, traces, labels, 
     for i in range(2):
         cpa_xors.append(cpa_method(total_samplept, number_of_traces, labels[:, i], traces))
         cpa_xors = np.nan_to_num(np.array(cpa_xors))
-        print("np.sort(cpa_xors[i])[::-1]:", np.sort(cpa_xors[i])[::-1])
-        print(ok)
+        # print("np.sort(cpa_xors[i])[::-1]:", np.sort(cpa_xors[i])[::-1])
+
         poi_xors.append(np.argsort(cpa_xors[i])[::-1][:nb_poi])
     if plot_cpa_image == True:
         fig, ax = plt.subplots(figsize=(12, 9))
