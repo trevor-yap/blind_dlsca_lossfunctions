@@ -21,9 +21,9 @@ def compute_noise_transition_matrix(pred, actual, classes):
         # print("actual[i],", actual[i])
         # print("pred[i],", pred[i])
         noise_transition_matrix[int(actual[i]), int(pred[i])] += 1.0
-    for j in range(noise_transition_matrix.shape[0]):
-        if np.sum(noise_transition_matrix[j,:]) != 0:
-            noise_transition_matrix[j,:] = noise_transition_matrix[j,:]/np.sum(noise_transition_matrix)
+    # for j in range(noise_transition_matrix.shape[0]):
+    #     if np.sum(noise_transition_matrix[j,:]) != 0:
+    #         noise_transition_matrix[j,:] = noise_transition_matrix[j,:]/np.sum(noise_transition_matrix)
     return noise_transition_matrix
 
 
