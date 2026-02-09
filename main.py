@@ -68,7 +68,7 @@ if __name__ == '__main__':
     ######################################################################Phase 2 Obtain Empirical Distribution #############################################################################################3
     ##############################################################################################################################################################################################
     #2.1 PoI Selection
-    poi_xors = poi_selection_options(dataset, nb_poi, total_samplept, number_of_traces, X_profiling, L_profiling, image_root,poi_root, poi_selection_mode, plot_cpa_image=True, save_poi=True)
+    poi_xors = poi_selection_options(dataset, nb_poi, total_samplept, number_of_traces, X_profiling, L_profiling, image_root,poi_root, poi_selection_mode, plot_cpa_image=True, save_poi=False)
 
     #2.2 Labeling Training traces.
     Y_train_solo_all_hw = labeling_traces(X_profiling, poi_xors, num_bits, save_root, labeling_type, poi_selection_mode, dataset, num_branch, save_labels=True)
