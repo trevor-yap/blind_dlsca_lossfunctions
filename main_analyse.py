@@ -38,7 +38,7 @@ if __name__ == '__main__':
     total_num_model = 100
 
     for model_type in ["mlp", "cnn"]:
-        for loss_type in ["CCE", "PEER_LOSS_CCE"]:  # , "PEER_LOSS_CCE"
+        for loss_type in ["CCE", "PEER_LOSS_CCE", 'MAE', 'GCE', 'NCE', 'FL', 'NFL']:  # , "PEER_LOSS_CCE"
             for model_idx in range(total_num_model):
 
 
@@ -49,8 +49,8 @@ if __name__ == '__main__':
                        allow_pickle=True).item()
                 GE = result["GE"]
                 NTGE = result["NTGE"]
-                # if GE[-1] <= 10:
-                print(model_type, model_idx, loss_type, "GE", GE, "NTGE", NTGE)
+                if GE[-1] <= 10:
+                    print(model_type, model_idx, loss_type, "GE", GE, "NTGE", NTGE)
             print("-------------------------------------------------------------------------------")
         print("-------------------------------------------------------------------------------")
 
