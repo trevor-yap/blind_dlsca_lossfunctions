@@ -104,6 +104,7 @@ if __name__ == '__main__':
                 trained_model_root = save_root + f'result_{model_type}_{epochs}_{loss_type}/'
                 if not os.path.exists(trained_model_root):
                     os.mkdir(trained_model_root)
+                print(trained_model_root)
                 # Train a DNN.
                 # print("X_train: ", X_train, X_train.shape)
                 # print("combined_hws: ", combined_hws, combined_hws.shape)
