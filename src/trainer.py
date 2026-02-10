@@ -60,7 +60,7 @@ def trainer_singletask_blind(config,num_epochs,num_sample_pts, dataloaders, data
     elif "NCE" == loss_type:
         criterion = NormalizedCrossEntropy(num_classes= classes)
     elif "FL" == loss_type:
-        criterion = FocalLoss(num_classes=classes,gamma=0.5)
+        criterion = FocalLoss(gamma=0.5)
     elif "NFL" == loss_type:
         criterion = NormalizedFocalLoss(num_classes=classes,gamma=0.5)
 

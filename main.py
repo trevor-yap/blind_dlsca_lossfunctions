@@ -94,6 +94,9 @@ if __name__ == '__main__':
     trainning_model = True
     for model_type in ["mlp", "cnn"]:
         for loss_type in [ "CCE", "PEER_LOSS_CCE", 'MAE', 'GCE', 'NCE', 'FL', 'NFL']:  # "CCE", "PEER_LOSS_CCE"
+            if loss_type in [ "CCE", "PEER_LOSS_CCE", 'MAE', 'GCE', 'NCE',] and model_type == "mlp":
+                continue
+
             for model_idx in range(total_num_model):
                 config = np.load(model_config_root + "configuration" + str(model_idx) + "_" + model_type + ".npy",
                                  allow_pickle=True).item()
