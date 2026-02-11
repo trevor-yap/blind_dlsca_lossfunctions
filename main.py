@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
     ######################################################################    Training DNN #############################################################################################3
     total_num_model = 100
-    save_config = False
+    save_config = True
     for model_type in ["mlp", "cnn"]:
         if save_config == True:
             print("SAVING NEW CONFIGURATION")

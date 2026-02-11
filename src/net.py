@@ -235,7 +235,7 @@ def create_hyperparameter_space(model_type):
                                                     "neurons": random.choice( [10, 20, 50, 100, 200, 300, 400, 500]),
                                                     "activation": random.choice(  ["relu", "selu", "elu", "tanh"]),
                                                     "kernel_initializer": random.choice(["random_uniform", "glorot_uniform", "he_uniform"]),
-                                                    "dropout": random.choice([True, False]),
+                                                    "dropout": random.choice([True]),
                                                 }
         return search_space
     elif model_type == "cnn":
@@ -253,7 +253,7 @@ def create_hyperparameter_space(model_type):
                                               "filters": random.choice( [4,8,12,16]),
                                               "kernels": random.choice( [i for i in range(26,53,2)]), #strides = kernel/2
                                               "padding": random.choice(  [0,4,8,12,16]),
-                                              "dropout": random.choice([True, False])
+                                              "dropout": random.choice([True])
                                         }
 
         return search_space
