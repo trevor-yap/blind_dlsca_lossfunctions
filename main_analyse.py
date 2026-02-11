@@ -49,7 +49,7 @@ if __name__ == '__main__':
                        allow_pickle=True).item()
                 GE = result["GE"]
                 NTGE = result["NTGE"]
-                if GE[-1] <= 10:
+                if GE[-1] <= 20:
                     print(model_type, model_idx, loss_type, "GE", GE, "NTGE", NTGE)
             print("-------------------------------------------------------------------------------")
         print("-------------------------------------------------------------------------------")
